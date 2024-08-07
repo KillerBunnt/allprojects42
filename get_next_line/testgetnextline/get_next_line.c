@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char *getback(char *buffer)
+#include <stdio.h>
+static char *getback(char *buffer)
 {
 	char			*temp;
 	unsigned int	index;
@@ -26,10 +26,10 @@ char *getback(char *buffer)
 		temp[index] = buffer[index];
 	}
 	temp[index] = 0;
-	return temp;
+	return (temp);
 }
 
-unsigned int getuse(char *useme, char *buffer, unsigned int sizeread)
+static char *getuse(char *useme, char *buffer, unsigned int sizeread, unsigned int *sizeused)
 {
 	unsigned int	index;
 	unsigned int	count;
@@ -40,6 +40,7 @@ unsigned int getuse(char *useme, char *buffer, unsigned int sizeread)
 	{
 		if (buffer[index] == '\n')
 			break ;
+		index++;
 	}
 	useme = malloc(sizeof(char) * (index + 1));
 	while(count < index)
@@ -48,22 +49,25 @@ unsigned int getuse(char *useme, char *buffer, unsigned int sizeread)
 		count++;
 	}
 	useme[count] = 0;
-	return (index);
+	*sizeused = index;
+	return (useme);
 }
 
-int getcurline(int fd, char *curline)
+static char *getcurline(int fd, char *curline)
 {
-	static char			buffer[BUFFER_SIZE] = NULL;
+	static char			buffer[BUFFER_SIZE] = "\0";
 	char				*useme;
+	char 				*temp;
 	unsigned int		sizeread;
 	unsigned int		sizeused;
 
-	if (buffer != NULL)
+	if (buffer[0])
 		curline = getback(buffer);
-	while (true)
+		printf("%s\n",buffer);
+	while (1)
 	{
 		sizeread = read(fd, buffer, BUFFER_SIZE);
-		sizeused = getuse(useme, buffer, sizeread);
+		useme = getuse(useme, buffer, sizeread, &sizeused);
 		curline = ft_strjoin(curline, useme);
 		free(useme);
 		if (sizeused != BUFFER_SIZE)
@@ -71,16 +75,18 @@ int getcurline(int fd, char *curline)
 	}
 	if (sizeread <= 0)
 		return (NULL);
-	return (1);
+	return (curline);
 }
 
 
 char	*get_next_line(int fd)
 {
 	char *curline;
-	curline = malloc(sizeof(char))
-		curline = "\0";
-	if (!(getcurline(fd, &curline)))
+
+	curline = malloc(sizeof(char));
+	curline = "\0";
+	curline = getcurline(fd, curline);
+	if(!(curline))
 		return (NULL);
 	return (curline);
 }

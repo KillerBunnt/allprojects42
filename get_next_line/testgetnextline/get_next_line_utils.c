@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-char	*ft_strjoin(char *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*temp;
 	int		count;
@@ -36,6 +36,5 @@ char	*ft_strjoin(char *s1, char const *s2)
 	while (s2[++size] && s2 != NULL)
 		temp[++count] = s2[size];
 	temp[count + 1] = 0;
-	free(s1);
 	return (temp);
 }
