@@ -11,4 +11,7 @@ int main()
 	printf("line2: %s\n", get_next_line(fileisame));
 	printf("line3: %s\n", get_next_line(fileisame));
 	printf("line4: %s\n", get_next_line(fileisame));
+	printf("line5: %s\n", get_next_line(fileisame));
+	printf("line6: %s\n", get_next_line(fileisame));
+	printf("line7: %s\n", get_next_line(fileisame));
 }

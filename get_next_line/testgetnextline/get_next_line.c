@@ -11,70 +11,67 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-static char *getback(char *buffer)
+
+static char *trimbuffer(char *buffer, unsigned int start)
 {
-	char			*temp;
-	unsigned int	index;
+	unsigned int index;
 
 	index = 0;
-	while (buffer[index] != '\n')
-		index++;
-	temp = malloc(sizeof(char) * (BUFFER_SIZE - index + 1));
-	while (index++ < BUFFER_SIZE)
+	while (buffer[start++])
 	{
-		temp[index] = buffer[index];
+		buffer[index] = buffer[start];
+		index++;
 	}
-	temp[index] = 0;
-	return (temp);
+	buffer[index] = 0;
+	return (buffer);
 }
 
-static char *getuse(char *useme, char *buffer, unsigned int sizeread, unsigned int *sizeused)
+static char *fillbuffer(int fd)
+{
+	static char			buffer[BUFFER_SIZE + 1] = "\0";
+	unsigned int		sizeread;
+
+	if (!(buffer[0]))
+	{
+		sizeread = read(fd, buffer, BUFFER_SIZE);
+		buffer[BUFFER_SIZE] = 0;
+	}
+	return (buffer);
+}
+
+static char *ft_getline(int fd, char *buffer)
 {
 	unsigned int	index;
+	char			*useme;
 	unsigned int	count;
 
 	count = 0;
 	index = 0;
-	while (index < sizeread)
-	{
-		if (buffer[index] == '\n')
-			break ;
+	while (buffer[index] != '\n' && buffer[index])
 		index++;
-	}
 	useme = malloc(sizeof(char) * (index + 1));
-	while(count < index)
+	useme[index] = 0;
+	while (count < index)
 	{
 		useme[count] = buffer[count];
 		count++;
 	}
-	useme[count] = 0;
-	*sizeused = index;
+	trimbuffer(buffer, index);
+	if (!(buffer[0]))
+	{
+		fillbuffer(fd);
+		useme = ft_strjoin(useme, ft_getline(fd, buffer));
+	}
 	return (useme);
 }
 
 static char *getcurline(int fd, char *curline)
 {
-	static char			buffer[BUFFER_SIZE] = "\0";
-	char				*useme;
-	char 				*temp;
-	unsigned int		sizeread;
-	unsigned int		sizeused;
+	char *buffer;
 
-	if (buffer[0])
-		curline = getback(buffer);
-		printf("%s\n",buffer);
-	while (1)
-	{
-		sizeread = read(fd, buffer, BUFFER_SIZE);
-		useme = getuse(useme, buffer, sizeread, &sizeused);
-		curline = ft_strjoin(curline, useme);
-		free(useme);
-		if (sizeused != BUFFER_SIZE)
-			break ;
-	}
-	if (sizeread <= 0)
-		return (NULL);
+	buffer = fillbuffer(fd);
+	curline = ft_getline(fd, buffer);
+
 	return (curline);
 }
 
@@ -86,7 +83,7 @@ char	*get_next_line(int fd)
 	curline = malloc(sizeof(char));
 	curline = "\0";
 	curline = getcurline(fd, curline);
-	if(!(curline))
+	if(!(curline[0]))
 		return (NULL);
 	return (curline);
 }
