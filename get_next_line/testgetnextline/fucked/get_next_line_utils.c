@@ -82,3 +82,19 @@ char	*ft_strlcpy(char *dest, const char *from, size_t size)
 	dest[count] = 0;
 	return (dest);
 }
+
+int	checkfornull(t_list lineread)
+{
+	unsigned int countcur;
+	unsigned int countuse;
+
+	countcur = 0;
+	countuse = 0;
+	while (lineread.used[countuse])
+		countuse++;
+	while (lineread.curline[countcur])
+		countcur++;
+	if (lineread.used[countuse - 1] == lineread.curline[countcur - 1])
+		return (1);
+	return (0);
+}

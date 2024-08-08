@@ -21,11 +21,14 @@
 # include <stdlib.h>
 # include <fcntl.h>
 
+
+
 char	*get_next_line(int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
 void	*ft_calloc(size_t size, size_t count);
 char	*ft_strlcpy(char *dest, const char *from, size_t size);
 size_t	ft_strlen(const char *str);
+
 
 typedef struct s_list
 {
@@ -35,5 +38,7 @@ typedef struct s_list
 	unsigned int	sizeread;
 	struct s_list	*next;
 }	t_list;
+
+int		checkfornull(t_list lineread);
 
 #endif

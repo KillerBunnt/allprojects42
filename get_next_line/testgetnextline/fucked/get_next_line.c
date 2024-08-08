@@ -65,7 +65,7 @@ static t_list	getcurline(t_list lineread, int fd)
 	while (lineread.used[index])
 		index++;
 	end = index + 1;
-	while (lineread.content[end] && lineread.content[index] != '\n')
+	while (lineread.content[end] != '\n' && lineread.content[end] && index != 0)
 		end++;
 	if (lineread.curline)
 		free(lineread.curline);
@@ -91,20 +91,13 @@ static t_list	readfile(int fd)
 char	*get_next_line(int fd)
 {
 	static t_list	lineread;
-	unsigned int	index;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd,0,0) < 0)
 		return (NULL);
-	index = 0;
 	if (!(lineread.content))
 		lineread = readfile(fd);
 	lineread = getcurline(lineread, fd);
-	while (lineread.used[index])
-		index++;
-	printf("(%c)",lineread.curline[ft_strlen(lineread.curline) - 1]);
-	printf("(%c)",lineread.used[ft_strlen(lineread.used) - 1]);
-	if (!lineread.curline[ft_strlen(lineread.curline) - 1]
-		&& lineread.used[index - 1] != '\n')
+	if (checkfornull(lineread))
 		return (NULL);
 	return (lineread.curline);
 }
