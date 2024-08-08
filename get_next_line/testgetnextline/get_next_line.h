@@ -12,7 +12,7 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFFER_SIZE 5
+# define BUFFER_SIZE 20
 
 # include <unistd.h>
 # include <stdlib.h>
@@ -20,5 +20,17 @@
 
 char	*get_next_line(int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
+void	*ft_calloc(size_t size, size_t count);
+char	*ft_strlcpy(char *dest, const char *from, size_t size);
+size_t	ft_strlen(const char *str);
+
+typedef struct s_list
+{
+	char			*content;
+	char			*used;
+	char			*curline;
+	unsigned int	sizeread;
+	struct s_list	*next;
+}	t_list;
 
 #endif

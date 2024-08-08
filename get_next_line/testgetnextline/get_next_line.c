@@ -11,79 +11,92 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
+static t_list readfile(int fd);
+static t_list getcurline(t_list lineread, int fd);
 
-static char *trimbuffer(char *buffer, unsigned int start)
+static t_list fillcurline(t_list lineread, unsigned int start, unsigned int end, unsigned int index)
 {
-	unsigned int index;
-
-	index = 0;
-	while (buffer[start++])
+	while (index < end)
 	{
-		buffer[index] = buffer[start];
+		if(lineread.content[index] != '\n')
+		{
+			lineread.curline[start] = lineread.content[index];
+			start++;
+		}
+		lineread.used[index] = lineread.content[index];
 		index++;
 	}
-	buffer[index] = 0;
-	return (buffer);
+	return (lineread);
 }
 
-static char *fillbuffer(int fd)
+static t_list checkend(t_list lineread, int fd, unsigned int end, unsigned int index)
 {
-	static char			buffer[BUFFER_SIZE + 1] = "\0";
-	unsigned int		sizeread;
+	char	*holdcurline;
+	char	*temp;
 
-	if (!(buffer[0]))
+	holdcurline =  ft_strlcpy(holdcurline, lineread.curline, end - index + 1);
+	if (end == BUFFER_SIZE)
 	{
-		sizeread = read(fd, buffer, BUFFER_SIZE);
-		buffer[BUFFER_SIZE] = 0;
+		free(lineread.content);
+		free(lineread.used);
+		lineread = readfile(fd);
+		lineread = getcurline(lineread, fd);
+		temp = ft_strjoin(holdcurline, lineread.curline);
+		free(holdcurline);
+		free(lineread.curline);
+		lineread.curline = temp;
 	}
-	return (buffer);
+	return (lineread);
 }
 
-static char *ft_getline(int fd, char *buffer)
+static t_list getcurline(t_list lineread, int fd)
 {
 	unsigned int	index;
-	char			*useme;
-	unsigned int	count;
+	unsigned int	end;
+	unsigned int	start;
 
-	count = 0;
+	start = 0;
+	end = 0;
 	index = 0;
-	while (buffer[index] != '\n' && buffer[index])
+	while (lineread.used[index])
 		index++;
-	useme = malloc(sizeof(char) * (index + 1));
-	useme[index] = 0;
-	while (count < index)
-	{
-		useme[count] = buffer[count];
-		count++;
-	}
-	trimbuffer(buffer, index);
-	if (!(buffer[0]))
-	{
-		fillbuffer(fd);
-		useme = ft_strjoin(useme, ft_getline(fd, buffer));
-	}
-	return (useme);
+	end = index + 1;
+	while (lineread.content[end] != '\n' && lineread.content[end])
+		end++;
+	if (lineread.curline)
+		free(lineread.curline);
+	lineread.curline = ft_calloc(sizeof(char), end - index + 1);
+	lineread = fillcurline(lineread, start, end, index);
+	lineread = checkend(lineread, fd, end, index-start);
+	return (lineread);
 }
 
-static char *getcurline(int fd, char *curline)
+static t_list readfile(int fd)
 {
-	char *buffer;
+	t_list	lineread;
 
-	buffer = fillbuffer(fd);
-	curline = ft_getline(fd, buffer);
-
-	return (curline);
+	lineread.curline = NULL;
+	lineread.content = ft_calloc(sizeof(char) , (BUFFER_SIZE + 1));
+	lineread.sizeread = read(fd, lineread.content, BUFFER_SIZE);
+	lineread.used = ft_calloc(sizeof(char) , (lineread.sizeread + 1));
+	lineread.content[BUFFER_SIZE] = 0;
+	lineread.used[lineread.sizeread] = 0;
+	return (lineread);
 }
-
 
 char	*get_next_line(int fd)
 {
-	char *curline;
+	static t_list	lineread;
+	unsigned int	index;
 
-	curline = malloc(sizeof(char));
-	curline = "\0";
-	curline = getcurline(fd, curline);
-	if(!(curline[0]))
+	index = 0;
+	if (!(lineread.content))
+		lineread = readfile(fd);
+	lineread = getcurline(lineread, fd);
+	while (lineread.used[index])
+		index++;
+	if (index == lineread.sizeread && !lineread.curline[0])
 		return (NULL);
-	return (curline);
+	return (lineread.curline);
 }
