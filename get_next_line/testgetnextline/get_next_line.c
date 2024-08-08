@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
+
 static t_list readfile(int fd);
 static t_list getcurline(t_list lineread, int fd);
 
