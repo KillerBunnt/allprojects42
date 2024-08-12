@@ -12,94 +12,101 @@
 
 #include "get_next_line.h"
 
-static t_list	readfile(int fd);
-static t_list	getcurline(t_list lineread, int fd);
+static t_list	getcurline(int fd, t_list lineread);
 
-static t_list	fillcurline(t_list lineread, unsigned int start
-	, unsigned int end, unsigned int index)
+static t_list	readline(int fd, t_list using)
 {
-	while (index < end)
+	if (!using.content)
+		using.content = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
+	else
+		using.content = ft_bzero(using.content)
+	using.sizeread = read(fd, using.content, BUFFER_SIZE);
+	using.content[using.sizeread] = 0;
+	using.used = ft_calloc(sizeof(char), using.sizeread + 1);
+	return (using);
+}
+
+static t_list	checkmore(int fd, t_list lineread, unsigned int count)
+{
+	if (!lineread.used[count])
 	{
-		if (lineread.content[index] != '\n')
-		{
-			lineread.curline[start] = lineread.content[index];
-			start++;
-		}
-		lineread.used[index] = lineread.content[index];
-		index++;
+		free(lineread.used);
+		lineread = readline(fd, lineread);
+		if (lineread.sizeread)
+			lineread = getcurline(fd, lineread);
 	}
 	return (lineread);
 }
 
-static t_list	checkend(t_list lineread, int fd, unsigned int end
+static t_list	checkend(int fd, t_list lineread, unsigned int count
 	, unsigned int index)
 {
-	char	*holdcurline;
-	char	*temp;
+	char			*temp;
+	char			*temp2;
+	unsigned int	fill;
 
-	holdcurline = NULL;
-	holdcurline = ft_strlcpy(holdcurline, lineread.curline, end - index + 1);
-	if (end == BUFFER_SIZE)
+	fill = 0;
+	temp = lineread.curline;
+	lineread.curline = ft_calloc(sizeof(char), count - index + 1);
+	while (index <= count)
 	{
-		free(lineread.content);
-		free(lineread.used);
-		lineread = readfile(fd);
-		lineread = getcurline(lineread, fd);
-		temp = ft_strjoin(holdcurline, lineread.curline);
-		free(holdcurline);
-		free(lineread.curline);
-		lineread.curline = temp;
+		lineread.curline[fill] = lineread.content[index];
+		index++;
+		fill++;
 	}
+	temp2 = lineread.curline;
+	if (temp)
+	{
+		lineread.curline = ft_strjoin(temp, temp2);
+		free(temp);
+		free(temp2);
+	}
+	if (lineread.used[count] != '\n')
+		lineread = checkmore(fd, lineread, count);
 	return (lineread);
 }
 
-static t_list	getcurline(t_list lineread, int fd)
+static t_list	getcurline(int fd, t_list lineread)
 {
 	unsigned int	index;
-	unsigned int	end;
-	unsigned int	start;
+	unsigned int	count;
 
-	start = 0;
-	end = 0;
 	index = 0;
 	while (lineread.used[index])
 		index++;
-	end = index + 1;
-	while (lineread.content[end] != '\n' && lineread.content[end])
-		end++;
-	lineread.curline = ft_calloc(sizeof(char), end - index + 1);
-	lineread = fillcurline(lineread, start, end, index);
-	lineread = checkend(lineread, fd, end, index - start);
-	return (lineread);
-}
-
-static t_list	readfile(int fd)
-{
-	t_list	lineread;
-
-	lineread.curline = NULL;
-	lineread.content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
-	lineread.sizeread = read(fd, lineread.content, BUFFER_SIZE);
-	lineread.used = ft_calloc(sizeof(char), (lineread.sizeread + 1));
-	lineread.content[BUFFER_SIZE] = 0;
-	lineread.used[lineread.sizeread] = 0;
+	count = index;
+	while (1)
+	{
+		lineread.used[count] = lineread.content[count];
+		if (lineread.used[count] == '\n' || !lineread.used[count])
+			break ;
+		count++;
+	}
+	lineread = checkend(fd, lineread, count, index);
 	return (lineread);
 }
 
 char	*get_next_line(int fd)
 {
 	static t_list	lineread;
-	unsigned int	index;
+	unsigned int	linesize;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd,0,0) < 0)
 		return (NULL);
-	index = 0;
-	if (!(lineread.content))
-		lineread = readfile(fd);
-	lineread = getcurline(lineread, fd);
-	while (lineread.used[index])
-		index++;
-	if (index == lineread.sizeread && !lineread.curline[0])
+	if (lineread.end)
 		return (NULL);
+	if (!lineread.content)
+		lineread = readline(fd, lineread);
+	linesize = lineread.sizeread;
+	if (lineread.end || !linesize || ((linesize < BUFFER_SIZE)
+			&& lineread.content[linesize - 1] == lineread.used[linesize - 1]))
+	{
+		lineread.end = 1;
+		free(lineread.content);
+		free(lineread.used);
+		return (NULL);
+	}
+	lineread.curline = NULL;
+	lineread = getcurline(fd, lineread);
 	return (lineread.curline);
 }

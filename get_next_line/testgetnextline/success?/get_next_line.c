@@ -18,9 +18,8 @@ static t_list	readline(int fd, t_list using)
 {
 	if (!using.content)
 		using.content = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
-	else
-		using.content = ft_bzero(using.content, BUFFER_SIZE + 1);
 	using.sizeread = read(fd, using.content, BUFFER_SIZE);
+	using.content[using.sizeread] = 0;
 	using.used = ft_calloc(sizeof(char), using.sizeread + 1);
 	return (using);
 }
@@ -47,11 +46,9 @@ static t_list	checkend(int fd, t_list lineread, unsigned int count
 	fill = 0;
 	temp = lineread.curline;
 	lineread.curline = ft_calloc(sizeof(char), count - index + 1);
-	while (index <= count)
+	while (index < count)
 	{
 		lineread.curline[fill] = lineread.content[index];
-		if (lineread.content[index] == '\n')
-			break ;
 		index++;
 		fill++;
 	}

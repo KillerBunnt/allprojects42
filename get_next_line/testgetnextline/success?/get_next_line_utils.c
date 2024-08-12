@@ -65,18 +65,3 @@ void	*ft_calloc(size_t size, size_t count)
 	}
 	return ((void *)temp);
 }
-
-void	*ft_bzero(void *addr, unsigned int byte)
-{
-	unsigned int	count;
-	char			*test;
-
-	test = addr;
-	count = 0;
-	while (count < byte)
-	{
-		test[count] = 0;
-		count++;
-	}
-	return ((char *)test);
-}

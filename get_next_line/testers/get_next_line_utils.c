@@ -66,19 +66,16 @@ void	*ft_calloc(size_t size, size_t count)
 	return ((void *)temp);
 }
 
-char	*ft_strlcpy(char *dest, const char *from, size_t size)
+void	ft_bzero(void *addr, unsigned int byte)
 {
-	size_t	count;
-	size_t	count2;
+	unsigned int	count;
+	char			*test;
 
+	test = addr;
 	count = 0;
-	count2 = ft_strlen(from);
-	dest = ft_calloc(size, 1);
-	while (count < size - 1 && from[count])
+	while (count < byte)
 	{
-		dest[count] = from[count];
+		test[count] = 0;
 		count++;
 	}
-	dest[count] = 0;
-	return (dest);
 }

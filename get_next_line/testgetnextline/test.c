@@ -11,7 +11,7 @@ int main()
 	while (x++ < 6)
 	{
 		temp = get_next_line(fileisame);
-		printf("line%d: %s\n",x, temp);
+		printf("line%d: %s|\n",x, temp);
 		free(temp);
 	}
 }
