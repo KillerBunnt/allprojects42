@@ -18,7 +18,7 @@ static t_list	getcurline(t_list lineread, int fd);
 static t_list	fillcurline(t_list lineread, unsigned int start
 	, unsigned int end, unsigned int index)
 {
-	while (index < end)
+	while (index <= end)
 	{
 		if (lineread.content[index] != '\n')
 		{
@@ -64,11 +64,13 @@ static t_list	getcurline(t_list lineread, int fd)
 	index = 0;
 	while (lineread.used[index])
 		index++;
-	end = index + 1;
-	while (lineread.content[end] && lineread.content[index] != '\n')
+	end = index;
+	while (lineread.content[end])
+	{
 		end++;
-	if (lineread.curline)
-		free(lineread.curline);
+		if (lineread.content[end] == '\n')
+			break ;
+	}
 	lineread.curline = ft_calloc(sizeof(char), end - index + 1);
 	lineread = fillcurline(lineread, start, end, index);
 	lineread = checkend(lineread, fd, end, index - start);
@@ -101,10 +103,8 @@ char	*get_next_line(int fd)
 	lineread = getcurline(lineread, fd);
 	while (lineread.used[index])
 		index++;
-	printf("(%c)",lineread.curline[ft_strlen(lineread.curline) - 1]);
-	printf("(%c)",lineread.used[ft_strlen(lineread.used) - 1]);
-	if (!lineread.curline[ft_strlen(lineread.curline) - 1]
-		&& lineread.used[index - 1] != '\n')
+	printf("(%s)",lineread.used);
+	if (!lineread.curline[0])
 		return (NULL);
 	return (lineread.curline);
 }

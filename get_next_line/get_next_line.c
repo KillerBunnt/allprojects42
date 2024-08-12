@@ -78,6 +78,7 @@ int getcurline(int fd, char *curline)
 char	*get_next_line(int fd)
 {
 	char *curline;
+	
 	curline = malloc(sizeof(char))
 		curline = "\0";
 	if (!(getcurline(fd, &curline)))

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
+#include <stdio.h>
 static t_list	readfile(int fd);
 static t_list	getcurline(t_list lineread, int fd);
 
@@ -65,7 +65,7 @@ static t_list	getcurline(t_list lineread, int fd)
 	while (lineread.used[index])
 		index++;
 	end = index + 1;
-	while (lineread.content[end] != '\n' && lineread.content[end])
+	while (lineread.content[end] && lineread.content[index] != '\n')
 		end++;
 	lineread.curline = ft_calloc(sizeof(char), end - index + 1);
 	lineread = fillcurline(lineread, start, end, index);
@@ -99,7 +99,8 @@ char	*get_next_line(int fd)
 	lineread = getcurline(lineread, fd);
 	while (lineread.used[index])
 		index++;
-	if (index == lineread.sizeread && !lineread.curline[0])
+	if (!lineread.curline[ft_strlen(lineread.curline) - 1]
+		&& lineread.used[index - 1] != '\n')
 		return (NULL);
 	return (lineread.curline);
 }
