@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10000000
+#  define BUFFER_SIZE 5
 # endif
 
 # include <unistd.h>
@@ -26,6 +26,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 void	*ft_calloc(size_t size, size_t count);
 void	*ft_bzero(void *addr, unsigned int byte);
 size_t	ft_strlen(const char *str);
+
 
 typedef struct s_list
 {

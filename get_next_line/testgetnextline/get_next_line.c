@@ -19,8 +19,9 @@ static t_list	readline(int fd, t_list using)
 	if (!using.content)
 		using.content = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
 	else
-		using.content = ft_bzero(using.content, BUFFER_SIZE + 1);
+		using.content = ft_bzero(using.content, BUFFER_SIZE);
 	using.sizeread = read(fd, using.content, BUFFER_SIZE);
+	using.content[using.sizeread] = 0;
 	using.used = ft_calloc(sizeof(char), using.sizeread + 1);
 	return (using);
 }
@@ -50,8 +51,6 @@ static t_list	checkend(int fd, t_list lineread, unsigned int count
 	while (index <= count)
 	{
 		lineread.curline[fill] = lineread.content[index];
-		if (lineread.content[index] == '\n')
-			break ;
 		index++;
 		fill++;
 	}
@@ -92,12 +91,21 @@ char	*get_next_line(int fd)
 	static t_list	lineread;
 	unsigned int	linesize;
 
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd,0,0) < 0)
+		return (NULL);
+	if (lineread.end)
+		return (NULL);
 	if (!lineread.content)
 		lineread = readline(fd, lineread);
 	linesize = lineread.sizeread;
-	if (!linesize || ((linesize < BUFFER_SIZE)
+	if (lineread.end || !linesize || ((linesize < BUFFER_SIZE)
 			&& lineread.content[linesize - 1] == lineread.used[linesize - 1]))
+	{
+		lineread.end = 1;
+		free(lineread.content);
+		free(lineread.used);
 		return (NULL);
+	}
 	lineread.curline = NULL;
 	lineread = getcurline(fd, lineread);
 	return (lineread.curline);

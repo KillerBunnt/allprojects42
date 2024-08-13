@@ -78,5 +78,5 @@ void	*ft_bzero(void *addr, unsigned int byte)
 		test[count] = 0;
 		count++;
 	}
-	return ((void *)test);
+	return ((char *)test);
 }
