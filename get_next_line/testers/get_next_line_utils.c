@@ -80,3 +80,19 @@ void	*ft_bzero(void *addr, unsigned int byte)
 	}
 	return ((void *)test);
 }
+
+int	finish(t_list *lineread)
+{
+	unsigned int	linesize;
+
+	linesize = lineread->sizeread;
+	if (lineread->end || !linesize || ((linesize < BUFFER_SIZE)
+			&& lineread->content[linesize - 1] == lineread->used[linesize - 1]))
+	{
+		lineread->end = 1;
+		free(lineread->content);
+		free(lineread->used);
+		return (1);
+	}
+	return (0);
+}

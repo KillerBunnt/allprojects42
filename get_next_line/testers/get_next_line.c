@@ -54,6 +54,7 @@ static t_list	checkend(int fd, t_list lineread, unsigned int count
 		index++;
 		fill++;
 	}
+	lineread.curline[fill] = 0;
 	temp2 = lineread.curline;
 	if (temp)
 	{
@@ -89,7 +90,6 @@ static t_list	getcurline(int fd, t_list lineread)
 char	*get_next_line(int fd)
 {
 	static t_list	lineread;
-	unsigned int	linesize;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd,0,0) < 0)
 		return (NULL);
@@ -97,16 +97,10 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!lineread.content)
 		lineread = readline(fd, lineread);
-	linesize = lineread.sizeread;
-	if (lineread.end || !linesize || ((linesize < BUFFER_SIZE)
-			&& lineread.content[linesize - 1] == lineread.used[linesize - 1]))
-	{
-		lineread.end = 1;
-		free(lineread.content);
-		free(lineread.used);
+	if (finish(&lineread))
 		return (NULL);
-	}
 	lineread.curline = NULL;
 	lineread = getcurline(fd, lineread);
+	finish(&lineread);
 	return (lineread.curline);
 }

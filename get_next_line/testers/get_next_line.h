@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5
+#  define BUFFER_SIZE 42
 # endif
 
 # include <unistd.h>
@@ -37,5 +37,7 @@ typedef struct s_list
 	int				end;
 	struct s_list	*next;
 }	t_list;
+
+int		finish(t_list *lineread);
 
 #endif
