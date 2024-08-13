@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
+#include <stdio.h>
 static t_list	getcurline(int fd, t_list lineread);
 
 static t_list	readline(int fd, t_list using)
@@ -54,6 +54,7 @@ static t_list	checkend(int fd, t_list lineread, unsigned int count
 		index++;
 		fill++;
 	}
+	lineread.curline[fill] = 0;
 	temp2 = lineread.curline;
 	if (temp)
 	{
