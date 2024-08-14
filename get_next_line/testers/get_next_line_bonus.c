@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
+#include "get_next_line_bonus.h"
+#include <stdio.h>
 static t_list	getcurline(int fd, t_list lineread);
 
 static t_list	readline(int fd, t_list using)
@@ -84,28 +84,32 @@ static t_list	getcurline(int fd, t_list lineread)
 		count++;
 	}
 	lineread = checkend(fd, lineread, count, index);
+	if (!lineread.curline[0])
+	{
+		free(lineread.curline);
+		lineread.curline = NULL;
+	}
 	return (lineread);
 }
 
 char	*get_next_line(int fd)
 {
-	static t_list	lineread;
+	static t_list	firstfd;
+	t_list			*lineread;
 
+	lineread = &firstfd;
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	if (lineread.end)
+	if (firstfd.fd && firstfd.fd != fd)
+		lineread = getfile(fd, lineread);
+	if (firstfd.fd == fd && lineread->end)
 		return (NULL);
-	if (!lineread.content)
-		lineread = readline(fd, lineread);
-	if (finish(&lineread))
-		return (NULL);
-	lineread.curline = NULL;
-	lineread = getcurline(fd, lineread);
-	finish(&lineread);
-	if (!lineread.curline[0])
+	if (!lineread->content)
 	{
-		free(lineread.curline);
-		return (NULL);
+		*lineread = readline(fd, *lineread);
+		lineread->fd = fd;
 	}
-	return (lineread.curline);
+	lineread->curline = NULL;
+	*lineread = getcurline(fd, *lineread);
+	return (finish(lineread));
 }

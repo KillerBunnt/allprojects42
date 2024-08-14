@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-char	*ft_strjoin(char *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*temp;
 	int		count;
@@ -29,13 +29,70 @@ char	*ft_strjoin(char *s1, char const *s2)
 	temp = (char *)malloc(size * sizeof(char));
 	if (temp == 0)
 		return (0);
-	while (s1[++count] && s1 != NULL)
+	while (s1[++count])
 		temp[count] = s1[count];
 	count--;
 	size = -1;
-	while (s2[++size] && s2 != NULL)
+	while (s2[++size])
 		temp[++count] = s2[size];
 	temp[count + 1] = 0;
-	free(s1);
 	return (temp);
+}
+
+size_t	ft_strlen(const char *str)
+{
+	int	num;
+
+	num = 0;
+	while (str[num])
+		num++;
+	return (num);
+}
+
+void	*ft_calloc(size_t size, size_t count)
+{
+	char			*temp;
+	size_t			count2;
+
+	count2 = 0;
+	temp = malloc(count * size);
+	if (temp == 0)
+		return (0);
+	while (count2 < count)
+	{
+		temp[count2] = 0;
+		count2++;
+	}
+	return ((void *)temp);
+}
+
+void	*ft_bzero(void *addr, unsigned int byte)
+{
+	unsigned int	count;
+	char			*test;
+
+	test = addr;
+	count = 0;
+	while (count < byte)
+	{
+		test[count] = 0;
+		count++;
+	}
+	return ((void *)test);
+}
+
+int	finish(t_list *lineread)
+{
+	unsigned int	linesize;
+
+	linesize = lineread->sizeread;
+	if (lineread->end || !linesize || ((linesize < BUFFER_SIZE)
+			&& lineread->content[linesize - 1] == lineread->used[linesize - 1]))
+	{
+		lineread->end = 1;
+		free(lineread->content);
+		free(lineread->used);
+		return (1);
+	}
+	return (0);
 }
