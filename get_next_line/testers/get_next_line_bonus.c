@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-#include <stdio.h>
+
 static t_list	getcurline(int fd, t_list lineread);
 
 static t_list	readline(int fd, t_list using)

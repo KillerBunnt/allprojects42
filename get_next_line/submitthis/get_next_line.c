@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
 static t_list	getcurline(int fd, t_list lineread);
 
@@ -18,15 +18,23 @@ static t_list	readline(int fd, t_list using)
 {
 	if (!using.content)
 		using.content = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
-	else
-		using.content = ft_bzero(using.content, BUFFER_SIZE);
 	using.sizeread = read(fd, using.content, BUFFER_SIZE);
-	using.content[using.sizeread] = 0;
-	using.used = ft_calloc(sizeof(char), using.sizeread + 1);
+	if (using.sizeread < 0)
+	{
+		free(using.curline);
+		free(using.used);
+		using.used = NULL;
+		return (using);
+	}
+	else
+	{
+		using.content[using.sizeread] = 0;
+		using.used = ft_calloc(sizeof(char), using.sizeread + 1);
+	}
 	return (using);
 }
 
-static t_list	checkmore(int fd, t_list lineread, unsigned int count)
+static t_list	checkmore(int fd, t_list lineread, int count)
 {
 	if (!lineread.used[count])
 	{
@@ -38,12 +46,12 @@ static t_list	checkmore(int fd, t_list lineread, unsigned int count)
 	return (lineread);
 }
 
-static t_list	checkend(int fd, t_list lineread, unsigned int count
-	, unsigned int index)
+static t_list	checkend(int fd, t_list lineread, int count
+	, int index)
 {
 	char			*temp;
 	char			*temp2;
-	unsigned int	fill;
+	int				fill;
 
 	fill = 0;
 	temp = lineread.curline;
@@ -69,8 +77,8 @@ static t_list	checkend(int fd, t_list lineread, unsigned int count
 
 static t_list	getcurline(int fd, t_list lineread)
 {
-	unsigned int	index;
-	unsigned int	count;
+	int	index;
+	int	count;
 
 	index = 0;
 	while (lineread.used[index])
@@ -84,32 +92,30 @@ static t_list	getcurline(int fd, t_list lineread)
 		count++;
 	}
 	lineread = checkend(fd, lineread, count, index);
-	if (!lineread.curline[0])
-	{
-		free(lineread.curline);
-		lineread.curline = NULL;
-	}
 	return (lineread);
 }
 
 char	*get_next_line(int fd)
 {
-	static t_list	firstfd;
-	t_list			*lineread;
+	static t_list	lineread;
 
-	lineread = &firstfd;
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (firstfd.fd && firstfd.fd != fd)
-		lineread = getfile(fd, lineread);
-	if (firstfd.fd == fd && lineread->end)
+	if (lineread.end)
 		return (NULL);
-	if (!lineread->content)
+	if (!lineread.content)
+		lineread = readline(fd, lineread);
+	if (!lineread.content[0])
 	{
-		*lineread = readline(fd, *lineread);
-		lineread->fd = fd;
+		free(lineread.content)
 	}
-	lineread->curline = NULL;
-	*lineread = getcurline(fd, *lineread);
-	return (finish(lineread));
+	lineread.curline = NULL;
+	lineread = getcurline(fd, lineread);
+	finish(&lineread);
+	if (!lineread.curline[0])
+	{
+		free(lineread.curline);
+		return (NULL);
+	}
+	return (lineread.curline);
 }

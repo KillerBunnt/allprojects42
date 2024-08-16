@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-#include <stdio.h>
+
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*temp;
@@ -71,10 +71,12 @@ void	*ft_bzero(void *addr, unsigned int byte)
 	return ((void *)test);
 }
 
-int	finish(t_list *lineread)
+char	*finish(t_list *lineread)
 {
 	unsigned int	linesize;
+	char			*temp;
 
+	temp = lineread->curline;
 	linesize = lineread->sizeread;
 	if (lineread->end || !linesize || ((linesize < BUFFER_SIZE)
 			&& lineread->content[linesize - 1] == lineread->used[linesize - 1]))
@@ -82,9 +84,15 @@ int	finish(t_list *lineread)
 		lineread->end = 1;
 		free(lineread->content);
 		free(lineread->used);
-		return (1);
+		if (lineread->canfree)
+		{
+			lineread->prev->next = lineread->next;
+			if (lineread->next)
+				lineread->next->prev = lineread->prev;
+			free(lineread);
+		}
 	}
-	return (0);
+	return (temp);
 }
 
 t_list	*getfile(int fd, t_list *lineread)
@@ -103,9 +111,10 @@ t_list	*getfile(int fd, t_list *lineread)
 			initial.curline = NULL;
 			initial.fd = fd;
 			initial.end = 0;
+			initial.canfree = 1;
 			initial.sizeread = 0;
-			initial.first = lineread;
 			initial.next = NULL;
+			initial.prev = lineread;
 			*lineread->next = initial;
 		}
 		lineread = lineread->next;

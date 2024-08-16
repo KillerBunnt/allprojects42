@@ -34,7 +34,8 @@ typedef struct s_list
 	int				sizeread;
 	int				fd;
 	int				end;
-	struct s_list	*first;
+	int				canfree;
+	struct s_list	*prev;
 	struct s_list	*next;
 }	t_list;
 

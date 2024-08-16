@@ -87,7 +87,8 @@ char	*finish(t_list *lineread)
 		if (lineread->canfree)
 		{
 			lineread->prev->next = lineread->next;
-			lineread->next->prev = lineread->prev;
+			if (lineread->next)
+				lineread->next->prev = lineread->prev;
 			free(lineread);
 		}
 	}
