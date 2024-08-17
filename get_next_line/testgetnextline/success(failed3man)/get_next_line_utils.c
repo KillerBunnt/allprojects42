@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 15:14:20 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/07/29 15:14:22 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/08/18 02:35:58 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*temp;
 	int		count;
@@ -36,7 +36,19 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	while (s2[++size])
 		temp[++count] = s2[size];
 	temp[count + 1] = 0;
+	free(s1);
+	free(s2);
 	return (temp);
+}
+
+size_t	ft_strlen(const char *str)
+{
+	int	num;
+
+	num = 0;
+	while (str[num])
+		num++;
+	return (num);
 }
 
 void	*ft_calloc(size_t size, size_t count)
@@ -69,55 +81,4 @@ void	*ft_bzero(void *addr, unsigned int byte)
 		count++;
 	}
 	return ((void *)test);
-}
-
-char	*finish(t_list *lineread)
-{
-	unsigned int	linesize;
-	char			*temp;
-
-	temp = lineread->curline;
-	linesize = lineread->sizeread;
-	if (lineread->end || !linesize || ((linesize < BUFFER_SIZE)
-			&& lineread->content[linesize - 1] == lineread->used[linesize - 1]))
-	{
-		lineread->end = 1;
-		free(lineread->content);
-		free(lineread->used);
-		if (lineread->canfree)
-		{
-			lineread->prev->next = lineread->next;
-			if (lineread->next)
-				lineread->next->prev = lineread->prev;
-			free(lineread);
-		}
-	}
-	return (temp);
-}
-
-t_list	*getfile(int fd, t_list *lineread)
-{
-	t_list	initial;
-
-	while (lineread->fd != fd)
-	{
-		if (!lineread->next)
-		{
-			lineread->next = malloc(sizeof(t_list));
-			if (!lineread->next)
-				return (NULL);
-			initial.content = NULL;
-			initial.used = NULL;
-			initial.curline = NULL;
-			initial.fd = fd;
-			initial.end = 0;
-			initial.canfree = 1;
-			initial.sizeread = 0;
-			initial.next = NULL;
-			initial.prev = lineread;
-			*lineread->next = initial;
-		}
-		lineread = lineread->next;
-	}
-	return (lineread);
 }

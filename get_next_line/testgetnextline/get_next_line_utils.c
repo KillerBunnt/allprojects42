@@ -6,13 +6,13 @@
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 15:14:20 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/07/29 15:14:22 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/08/18 02:35:58 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*temp;
 	int		count;
@@ -36,6 +36,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	while (s2[++size])
 		temp[++count] = s2[size];
 	temp[count + 1] = 0;
+	free(s1);
+	free(s2);
 	return (temp);
 }
 
@@ -79,20 +81,4 @@ void	*ft_bzero(void *addr, unsigned int byte)
 		count++;
 	}
 	return ((void *)test);
-}
-
-int	finish(t_list *lineread)
-{
-	unsigned int	linesize;
-
-	linesize = lineread->sizeread;
-	if (lineread->end || !linesize || ((linesize < BUFFER_SIZE)
-			&& lineread->content[linesize - 1] == lineread->used[linesize - 1]))
-	{
-		lineread->end = 1;
-		free(lineread->content);
-		free(lineread->used);
-		return (1);
-	}
-	return (0);
 }
