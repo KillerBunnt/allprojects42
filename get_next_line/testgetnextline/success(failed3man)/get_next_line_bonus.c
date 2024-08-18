@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,15 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
+#include "get_next_line_bonus.h"
+#include <stdio.h>
 void	readline(int fd, t_list *file);
 
-static t_list	*makenewfile(int fd)
+static t_list	*makenewfile(int fd, t_list *curfile)
 {
 	t_list	*newfile;
 
 	newfile = malloc(sizeof(t_list));
+	newfile->prev = curfile;
+	if (curfile)
+		curfile->next = newfile;
+	newfile->fd = fd;
 	newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
 	newfile->curline = NULL;
 	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
@@ -26,7 +30,7 @@ static t_list	*makenewfile(int fd)
 	{
 		free(newfile->content);
 		free(newfile);
-		return (NULL);
+		return (curfile);
 	}
 	newfile->next = NULL;
 	return (newfile);
@@ -101,22 +105,40 @@ void	readline(int fd, t_list *file)
 char	*get_next_line(int fd)
 {
 	static t_list	*file;
-	char			*temp;
+	void			*temp;
 
+	temp = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
+	while (file && file->prev)
+		file = file->prev;
+	while (file && (file->fd != fd))
+	{
+		temp = file;
+		file = file->next;
+	}
 	if (!file)
-		file = makenewfile(fd);
-	if (!file)
-		return (NULL);
+	{
+		file = makenewfile(fd, temp);
+		if (file == temp)
+			return (NULL);
+	}
 	file->curline = NULL;
 	temp = ft_getline(fd, file);
-	if (temp && temp[0])
+	if (temp && ((char *)temp)[0])
 		return (temp);
 	else if (temp)
 		free(temp);
 	free(file->content);
+	if (file->prev)
+		file->prev->next = file->next;
+	if (file->next)
+		file->next->prev = file->prev;
+	if (file->prev)
+		temp = file->prev;
+	else
+		temp = file->next;
 	free (file);
-	file = NULL;
+	file = temp;
 	return (NULL);
 }
