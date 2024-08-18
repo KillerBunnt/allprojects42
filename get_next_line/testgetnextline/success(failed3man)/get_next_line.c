@@ -19,6 +19,8 @@ static t_list	*makenewfile(int fd)
 	t_list	*newfile;
 
 	newfile = malloc(sizeof(t_list));
+	if (!newfile)
+		return (NULL);
 	newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
 	newfile->curline = NULL;
 	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
@@ -66,9 +68,12 @@ void	ft_reset(t_list *file, int end)
 	int	start;
 
 	start = -1;
-	while (file->content[end])
+	if (file->content)
+	{
+		while (file->content[end])
+			file->content[++start] = file->content[end++];
 		file->content[++start] = file->content[end++];
-	file->content[++start] = file->content[end++];
+	}
 }
 
 void	readline(int fd, t_list *file)
@@ -86,6 +91,8 @@ void	readline(int fd, t_list *file)
 	if (!end)
 		return ;
 	temp = malloc(sizeof(char) * (end - start));
+	if (!temp)
+		return ;
 	temp[end] = 0;
 	while (++start < end)
 		temp[start] = file->content[start];

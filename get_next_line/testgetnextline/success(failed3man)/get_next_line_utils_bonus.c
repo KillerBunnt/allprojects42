@@ -82,3 +82,16 @@ void	*ft_bzero(void *addr, unsigned int byte)
 	}
 	return ((void *)test);
 }
+
+void	ft_reset(t_list *file, int end)
+{
+	int	start;
+
+	start = -1;
+	if (file->content)
+	{
+		while (file->content[end])
+			file->content[++start] = file->content[end++];
+		file->content[++start] = file->content[end++];
+	}
+}

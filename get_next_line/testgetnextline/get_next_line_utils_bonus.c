@@ -82,3 +82,25 @@ void	*ft_bzero(void *addr, unsigned int byte)
 	}
 	return ((void *)test);
 }
+
+t_list	*makenewfile(int fd, t_list *curfile)
+{
+	t_list	*newfile;
+
+	newfile = malloc(sizeof(t_list));
+	newfile->prev = curfile;
+	newfile->fd = fd;
+	newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
+	newfile->curline = NULL;
+	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
+	if (!newfile->sizeread || newfile->sizeread < 0)
+	{
+		free(newfile->content);
+		free(newfile);
+		return (curfile);
+	}
+	if (curfile)
+		curfile->next = newfile;
+	newfile->next = NULL;
+	return (newfile);
+}

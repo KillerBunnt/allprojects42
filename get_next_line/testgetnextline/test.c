@@ -5,8 +5,8 @@ int main()
 {
 	// char *name[1] = {"hello.txt"};
 	// int fileisame[1] = {open(name[0], O_RDONLY)};
-	char *name[3] = {"hello.txt","goodbye.txt","fuckyou.txt"};
-	int fileisame[3] = {open(name[0], O_RDONLY),open(name[1], O_RDONLY),open(name[2], O_RDONLY)};
+	char *name[4] = {"hello.txt","goodbye.txt","fuckyou.txt","nl.txt"};
+	int fileisame[4] = {open(name[0], O_RDONLY),open(name[1], O_RDONLY),open(name[2], O_RDONLY),open(name[3], O_RDONLY)};
 	char *temp = NULL;
 	int x = 0;
 	int y = 0;
@@ -48,6 +48,9 @@ int main()
 	printf("line8: %s|\n", temp);
 	free(temp);
 	temp = get_next_line(fileisame[2]);
+	printf("line9: %s|\n", temp);
+	free(temp);
+	temp = get_next_line(fileisame[3]);
 	printf("line9: %s|\n", temp);
 	free(temp);
 }

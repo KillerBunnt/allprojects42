@@ -36,7 +36,7 @@ typedef struct s_list
 	struct s_list	*prev;
 	struct s_list	*next;
 }	t_list;
-
+t_list	*makenewfile(int fd, t_list *curfile);
 int		finish(t_list *lineread);
 
 #endif

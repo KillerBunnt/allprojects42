@@ -11,29 +11,27 @@
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-#include <stdio.h>
+
 void	readline(int fd, t_list *file);
 
-static t_list	*makenewfile(int fd, t_list *curfile)
+static char	*resetfile(t_list *file, void *temp)
 {
-	t_list	*newfile;
-
-	newfile = malloc(sizeof(t_list));
-	newfile->prev = curfile;
-	if (curfile)
-		curfile->next = newfile;
-	newfile->fd = fd;
-	newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
-	newfile->curline = NULL;
-	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
-	if (!newfile->sizeread || newfile->sizeread < 0)
-	{
-		free(newfile->content);
-		free(newfile);
-		return (curfile);
-	}
-	newfile->next = NULL;
-	return (newfile);
+	if (temp && ((char *)temp)[0])
+		return (temp);
+	else if (temp)
+		free(temp);
+	free(file->content);
+	if (file->prev)
+		file->prev->next = file->next;
+	if (file->next)
+		file->next->prev = file->prev;
+	if (file->prev)
+		temp = file->prev;
+	else
+		temp = file->next;
+	free (file);
+	file = temp;
+	return (NULL);
 }
 
 char	*ft_getline(int fd, t_list *file)
@@ -109,7 +107,7 @@ char	*get_next_line(int fd)
 
 	temp = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
+		return (0);
 	while (file && file->prev)
 		file = file->prev;
 	while (file && (file->fd != fd))
@@ -125,20 +123,5 @@ char	*get_next_line(int fd)
 	}
 	file->curline = NULL;
 	temp = ft_getline(fd, file);
-	if (temp && ((char *)temp)[0])
-		return (temp);
-	else if (temp)
-		free(temp);
-	free(file->content);
-	if (file->prev)
-		file->prev->next = file->next;
-	if (file->next)
-		file->next->prev = file->prev;
-	if (file->prev)
-		temp = file->prev;
-	else
-		temp = file->next;
-	free (file);
-	file = temp;
-	return (NULL);
+	return (resetfile(file, temp));
 }

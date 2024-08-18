@@ -11,30 +11,8 @@
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-#include <stdio.h>
+
 void	readline(int fd, t_list *file);
-
-static t_list	*makenewfile(int fd, t_list *curfile)
-{
-	t_list	*newfile;
-
-	newfile = malloc(sizeof(t_list));
-	newfile->prev = curfile;
-	if (curfile)
-		curfile->next = newfile;
-	newfile->fd = fd;
-	newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
-	newfile->curline = NULL;
-	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
-	if (!newfile->sizeread || newfile->sizeread < 0)
-	{
-		free(newfile->content);
-		free(newfile);
-		return (curfile);
-	}
-	newfile->next = NULL;
-	return (newfile);
-}
 
 char	*ft_getline(int fd, t_list *file)
 {
@@ -65,14 +43,28 @@ char	*ft_getline(int fd, t_list *file)
 	return (file->curline);
 }
 
-void	ft_reset(t_list *file, int end)
+static t_list	*makenewfile(int fd, t_list *curfile)
 {
-	int	start;
+	t_list	*newfile;
 
-	start = -1;
-	while (file->content[end])
-		file->content[++start] = file->content[end++];
-	file->content[++start] = file->content[end++];
+	newfile = malloc(sizeof(t_list));
+	if (!newfile)
+		return (NULL);
+	newfile->prev = curfile;
+	newfile->fd = fd;
+	newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
+	newfile->curline = NULL;
+	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
+	if (!newfile->sizeread || newfile->sizeread < 0)
+	{
+		free(newfile->content);
+		free(newfile);
+		return (curfile);
+	}
+	if (curfile)
+		curfile->next = newfile;
+	newfile->next = NULL;
+	return (newfile);
 }
 
 void	readline(int fd, t_list *file)
@@ -90,6 +82,8 @@ void	readline(int fd, t_list *file)
 	if (!end)
 		return ;
 	temp = malloc(sizeof(char) * (end - start));
+	if (!temp)
+		return ;
 	temp[end] = 0;
 	while (++start < end)
 		temp[start] = file->content[start];
@@ -102,10 +96,9 @@ void	readline(int fd, t_list *file)
 		ft_getline(fd, file);
 }
 
-char	*get_next_line(int fd)
+static t_list	*subget(int fd, t_list *file)
 {
-	static t_list	*file;
-	void			*temp;
+	t_list	*temp;
 
 	temp = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -124,6 +117,18 @@ char	*get_next_line(int fd)
 			return (NULL);
 	}
 	file->curline = NULL;
+	return (file);
+}
+
+char	*get_next_line(int fd)
+{
+	static t_list	*file;
+	void			*temp;
+
+	temp = subget(fd, file);
+	if (!temp)
+		return (NULL);
+	file = temp;
 	temp = ft_getline(fd, file);
 	if (temp && ((char *)temp)[0])
 		return (temp);

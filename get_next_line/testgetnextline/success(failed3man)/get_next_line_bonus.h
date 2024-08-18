@@ -36,7 +36,7 @@ typedef struct s_list
 	struct s_list	*prev;
 	struct s_list	*next;
 }	t_list;
-
+void	ft_reset(t_list *file, int end);
 int		finish(t_list *lineread);
 
 #endif
