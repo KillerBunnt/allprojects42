@@ -107,7 +107,7 @@ char	*get_next_line(int fd)
 		lineread = readline(fd, lineread);
 	if (!lineread.content[0])
 	{
-		free(lineread.content)
+		free(lineread.content);
 	}
 	lineread.curline = NULL;
 	lineread = getcurline(fd, lineread);
