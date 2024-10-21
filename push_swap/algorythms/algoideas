@@ -1,0 +1,2 @@
+1. biggest sorted stack to stackb, then next most stack sort into b so on and so forth
+2. smallest stack into b, then next smallest into b so on so forth until biggest stack left in a and everything sort back into a.(USING)
