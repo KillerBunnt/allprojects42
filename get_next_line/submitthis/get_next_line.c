@@ -119,3 +119,23 @@ char	*get_next_line(int fd)
 	}
 	return (lineread.curline);
 }
+
+int	main(void)
+{
+	char	*line;
+	int		i;
+	int		fd1;
+	int done = 1;
+	fd1 = open("file.txt", O_RDONLY);
+	i = 1;
+
+	while (line)
+	{
+		line = get_next_line(fd1);
+		printf("line [%02d]: %s|\n", i, line);
+		free(line);
+		i++;
+	}
+	close(fd1);
+	return (0);
+}
