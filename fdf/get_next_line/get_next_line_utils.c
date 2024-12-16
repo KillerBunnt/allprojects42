@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 15:14:20 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/08/18 02:35:58 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/10/26 13:40:48 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*gnl_strjoin(char *s1, char *s2)
 {
 	char	*temp;
 	int		count;
@@ -41,7 +41,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (temp);
 }
 
-size_t	ft_strlen(const char *str)
+size_t	gnl_strlen(const char *str)
 {
 	int	num;
 
@@ -51,7 +51,7 @@ size_t	ft_strlen(const char *str)
 	return (num);
 }
 
-void	*ft_calloc(size_t size, size_t count)
+void	*gnl_calloc(size_t size, size_t count)
 {
 	char			*temp;
 	size_t			count2;
@@ -68,7 +68,7 @@ void	*ft_calloc(size_t size, size_t count)
 	return ((void *)temp);
 }
 
-void	*ft_bzero(void *addr, unsigned int byte)
+void	*gnl_bzero(void *addr, unsigned int byte)
 {
 	unsigned int	count;
 	char			*test;

@@ -6,7 +6,7 @@
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:01:40 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/06/26 18:11:27 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/10/26 13:38:48 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ char			*ft_substr(char const *s, unsigned int start, size_t len);
 int				ft_tolower(int x);
 int				ft_toupper(int x);
 
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}	t_list;
+// typedef struct s_list
+// {
+// 	void			*content;
+// 	struct s_list	*next;
+// }	t_list;
 
 #endif

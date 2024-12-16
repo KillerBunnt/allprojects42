@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 15:14:36 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/08/18 02:36:23 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/10/26 13:42:45 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 # include <fcntl.h>
 
 char	*get_next_line(int fd);
-char	*ft_strjoin(char *s1, char *s2);
-void	*ft_calloc(size_t size, size_t count);
-void	*ft_bzero(void *addr, unsigned int byte);
-size_t	ft_strlen(const char *str);
+char	*gnl_strjoin(char *s1, char *s2);
+void	*gnl_calloc(size_t size, size_t count);
+void	*gnl_bzero(void *addr, unsigned int byte);
+size_t	gnl_strlen(const char *str);
 
 typedef struct s_list
 {

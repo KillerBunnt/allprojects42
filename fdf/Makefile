@@ -1,13 +1,14 @@
 COMPILE =cc
-FILESM = ./main/fdf.c \
-		./get_next_line/get_next_line.c ./get_next_line/get_next_line_utils.c
+FILESM = ./main/fdf.c ./main/fdf1.c\
+		./get_next_line/get_next_line.c ./get_next_line/get_next_line_utils.c \
+		./utils/utils2.c ./utils/readmap.c ./utils/drawmap.c ./utils/colorcode.c
 MAN = $(FILESM:.c=.o)
 LIBFTPRINTFA = libftprintf/libftprintf.a
 NAME = fdf.a
 LIBM =ar -rcs
 FLAGSA =-Wall -Wextra -Werror
 FLAGSO = -I minilibx/
-FLAGSP = -L minilibx/ -lmlx -lX11 -lXext
+FLAGSP = -L minilibx/ -lmlx -lX11 -lXext -lm
 
 all: 
 	make -C libftprintf

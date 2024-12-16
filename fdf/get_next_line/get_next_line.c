@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 15:13:56 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/08/18 03:33:17 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/10/26 13:42:24 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ char	*ft_getline(int fd, t_list *file)
 	temp = file->curline;
 	if (!file->content[0])
 	{
-		ft_bzero(file->content, BUFFER_SIZE);
+		gnl_bzero(file->content, BUFFER_SIZE);
 		file->sizeread = read(fd, file->content, BUFFER_SIZE);
-		file->content[ft_strlen(file->content)] = 0;
+		file->content[gnl_strlen(file->content)] = 0;
 		if (file->sizeread < 0)
 		{
-			ft_bzero(file->content, BUFFER_SIZE);
+			gnl_bzero(file->content, BUFFER_SIZE);
 			if (file->curline)
-				ft_bzero(file->curline, ft_strlen(file->curline));
+				gnl_bzero(file->curline, gnl_strlen(file->curline));
 			return (NULL);
 		}
 		if (!file->sizeread)
@@ -54,7 +54,7 @@ static t_list	*makenewfile(int fd, t_list *curfile)
 	newfile->fd = fd;
 	newfile->content = NULL;
 	while (!newfile->content)
-		newfile->content = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
+		newfile->content = gnl_calloc(sizeof(char), (BUFFER_SIZE + 1));
 	newfile->curline = NULL;
 	newfile->sizeread = read(fd, newfile->content, BUFFER_SIZE);
 	if (!newfile->sizeread || newfile->sizeread < 0)
@@ -91,10 +91,10 @@ void	readline(int fd, t_list *file)
 		temp[start] = file->content[start];
 	ft_reset(file, end);
 	if (file->curline)
-		file->curline = ft_strjoin(file->curline, temp);
+		file->curline = gnl_strjoin(file->curline, temp);
 	else
 		file->curline = temp;
-	if (file->curline && file->curline[ft_strlen(file->curline) - 1] != '\n')
+	if (file->curline && file->curline[gnl_strlen(file->curline) - 1] != '\n')
 		ft_getline(fd, file);
 }
 
