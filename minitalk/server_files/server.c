@@ -3,15 +3,10 @@ int signalsrecieved;
 
 void processword(unsigned char unicode)
 {
-	unsigned int		temp;
-	unsigned int		powed;
-
-	temp = 0;
-	powed = 1;
 	if (unicode >> 7 == 0)
-		ft_printf("%c", unicode);
+		ft_putchar_fd(unicode, 1);
 	else
-		ft_printf("(?)\n");
+		ft_putstr_fd("(?)\n", 1);
 }
 
 void signalhandlers(int sigcode)

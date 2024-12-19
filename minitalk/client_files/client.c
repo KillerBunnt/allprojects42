@@ -27,10 +27,9 @@ void sendinitial(int digits, int serverpid)
 	temp = 7 - digits;
 	while (temp-- >= 0)
 	{
-		
 		ft_printf("0");
 		kill(serverpid, SIGUSR2);
-		usleep(1000);
+		usleep(300);
 	}
 }
 
@@ -43,8 +42,17 @@ void sendchar(int digits, char *charbin, int serverpid)
 			kill(serverpid, SIGUSR1);
 		else
 			kill(serverpid, SIGUSR2);
-		usleep(1000);
+		usleep(300);
 	}
+}
+
+int checkpid(int argcount, int serverpid)
+{
+	if (argcount != 3)
+		return (0);
+	if (serverpid < 0)
+		return (0);
+	return (1);
 }
 
 int	main(int argcount, char **args)
@@ -52,13 +60,9 @@ int	main(int argcount, char **args)
 	int		index;
 	int		charcode;
 	int		digits;
-	int		serverpid;
 	char	charbin[22];
 
-	serverpid = ft_atoi(args[1]);
-	if (argcount != 3)
-		return (0);
-	if (serverpid < 0)
+	if(!checkpid(argcount, ft_atoi(args[1])))
 		return (0);
 	index = -1;
 	while (args[2][++index])
@@ -69,10 +73,9 @@ int	main(int argcount, char **args)
 		digits++;
 		if (digits <= 7)
 		{
-			sendinitial(digits, serverpid);
-			usleep(1000);
+			sendinitial(digits, ft_atoi(args[1]));
 			sendchar(digits, (char *)charbin, serverpid);
-			sleep(1);
+			usleep(500);
 		}
 		ft_printf("(%c, %d, %s)\n", charcode, digits, charbin);
 	}
