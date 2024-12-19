@@ -1,16 +1,25 @@
-#include "../includes/all.h"
-int signalsrecieved;
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdexmund <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/19 16:29:42 by tdexmund          #+#    #+#             */
+/*   Updated: 2024/12/19 16:29:45 by tdexmund         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void processword(unsigned char unicode)
+#include "../includes/all.h"
+
+void	processword(unsigned char unicode)
 {
-	if (unicode >> 7 == 0)
-		ft_putchar_fd(unicode, 1);
-	else
-		ft_putstr_fd("(?)\n", 1);
+	ft_putchar_fd(unicode, 1);
 }
 
-void signalhandlers(int sigcode)
+void	signalhandlers(int sigcode)
 {
+	static int				signalsrecieved = 0;
 	static unsigned char	unicode = 0;
 
 	if (sigcode == SIGUSR1)
@@ -24,21 +33,18 @@ void signalhandlers(int sigcode)
 		processword(unicode);
 		unicode = 0;
 	}
-	
 }
 
-int main()
+int	main(void)
 {
-	unsigned int serverpid;
-	struct sigaction handle;
+	unsigned int		serverpid;
+	struct sigaction	handle;
 
-	signalsrecieved = 0;
 	serverpid = getpid();
 	ft_printf("Server's process ID: %u\n", serverpid);
 	handle.sa_handler = signalhandlers;
-	sigemptyset(&handle.sa_mask);
-	sigaction(SIGUSR1, &handle, NULL);
-	sigaction(SIGUSR2, &handle, NULL);
+	signal(SIGUSR1, &signalhandlers);
+	signal(SIGUSR2, &signalhandlers);
 	while (1)
 		pause();
 }

@@ -20,33 +20,39 @@ int	binconv(int num, char *bin, int count)
 	return (count);
 }
 
-void sendinitial(int digits, int serverpid)
+void	sendchar(int digits, char *charbin, int serverpid)
 {
-	int temp;
+	while (--digits >= 0)
+	{
+		if (charbin[digits] == '1')
+		{
+			while (kill(serverpid, SIGUSR1))
+				continue ;
+		}
+		else
+		{
+			while (kill(serverpid, SIGUSR2))
+				continue ;
+		}
+		usleep(500);
+	}
+}
+
+void	sendinitial(int digits, int serverpid, char *charbin)
+{
+	int	temp;
 
 	temp = 7 - digits;
 	while (temp-- >= 0)
 	{
-		ft_printf("0");
-		kill(serverpid, SIGUSR2);
-		usleep(300);
+		while (kill(serverpid, SIGUSR2))
+			continue ;
+		usleep(500);
 	}
+	sendchar(digits, charbin, serverpid);
 }
 
-void sendchar(int digits, char *charbin, int serverpid)
-{
-	while (--digits >= 0)
-	{
-		ft_printf("%c", charbin[digits]);
-		if (charbin[digits] == '1')
-			kill(serverpid, SIGUSR1);
-		else
-			kill(serverpid, SIGUSR2);
-		usleep(300);
-	}
-}
-
-int checkpid(int argcount, int serverpid)
+int	checkpid(int argcount, int serverpid)
 {
 	if (argcount != 3)
 		return (0);
@@ -60,23 +66,24 @@ int	main(int argcount, char **args)
 	int		index;
 	int		charcode;
 	int		digits;
-	char	charbin[22];
+	int		serverpid;
+	char	*charbin;
 
-	if(!checkpid(argcount, ft_atoi(args[1])))
+	serverpid = ft_atoi(args[1]);
+	if (!checkpid(argcount, serverpid))
 		return (0);
 	index = -1;
+	charbin = ft_calloc(32, sizeof(char));
+	if (!charbin)
+		return (0);
 	while (args[2][++index])
 	{
 		charcode = args[2][index];
-		ft_memset(charbin, 0, sizeof(char) * 22);
+		ft_bzero(charbin, sizeof(char) * 32);
 		digits = binconv(charcode, charbin, 0);
 		digits++;
 		if (digits <= 7)
-		{
-			sendinitial(digits, ft_atoi(args[1]));
-			sendchar(digits, (char *)charbin, serverpid);
-			usleep(500);
-		}
-		ft_printf("(%c, %d, %s)\n", charcode, digits, charbin);
+			sendinitial(digits, serverpid, charbin);
+		ft_printf("%c", charcode);
 	}
 }
