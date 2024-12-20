@@ -1,6 +1,6 @@
 COMPILE =cc
-FILESM = ./server_files/server.c \
-		./client_files/client.c
+FILESM = ./server_files/testserver.c \
+		./client_files/testclient.c
 MAN = $(FILESM:.c=.o)
 LIBFTPRINTFA = libftprintf/libftprintf.a
 NAME = minitalk.a
@@ -15,8 +15,8 @@ all:
 	$(COMPILE) $(FLAGS) -c $< -o $@
 	$(LIBM) $(NAME) $@
 $(NAME): $(MAN)
-	$(COMPILE) $(FLAGS) -o server ./server_files/server.c -L. -l:$(NAME)
-	$(COMPILE) $(FLAGS) -o client ./client_files/client.c -L. -l:$(NAME)
+	$(COMPILE) $(FLAGS) -o server ./server_files/testserver.c -L. -l:$(NAME)
+	$(COMPILE) $(FLAGS) -o client ./client_files/testclient.c -L. -l:$(NAME)
 clean:
 	rm -f $(MAN)
 	make clean -C libftprintf
