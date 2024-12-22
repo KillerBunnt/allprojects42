@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   testserver.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdexmund <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 16:29:42 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/12/19 16:29:45 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/12/22 19:01:25 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,13 @@ void	signalhandlers(int sigcode, siginfo_t *client, void *others)
 	static unsigned char	unicode[4] = {0,0,0,0};
 	static unsigned char	buffer;
 
-	usleep(200);
 	others = (void *)others;
 	signalsrecieved++;
 	fillbuffer(&buffer, sigcode);
 	if (signalsrecieved == 8)
 	{
 		if (buffer == 255)
-			ft_putstr_fd("\nEND OF MESSAGE\n", 1);
+			ft_putstr_fd("\nEND OF MESSAGE\n\n", 1);
 		else if (index < 4)
 		{
 			unicode[index] = buffer;

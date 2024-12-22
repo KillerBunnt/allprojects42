@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   testclient.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdexmund <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 15:11:56 by tdexmund          #+#    #+#             */
-/*   Updated: 2024/12/18 15:11:59 by tdexmund         ###   ########.fr       */
+/*   Updated: 2024/12/22 18:59:34 by tdexmund         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/all.h"
+
+int g_pause;
 
 void	sendchar(char chr, int serverpid)
 {
@@ -19,14 +21,16 @@ void	sendchar(char chr, int serverpid)
 	bits = 8;
 	while (bits--)
 	{
-		usleep(300);
 		if (chr & 1)
 			kill(serverpid, SIGUSR1);
 		else
 			kill(serverpid, SIGUSR2);
 		chr = chr >> 1;
+		while (!g_pause)
+			continue;
+		g_pause = 0;
 	}
-	pause();
+	
 }
 
 int	checkpid(int argcount, int serverpid)
@@ -40,7 +44,7 @@ int	checkpid(int argcount, int serverpid)
 
 void catchsignal(int sig)
 {
-	sig = 0;
+	g_pause = sig;
 	return ;
 }
 
@@ -50,6 +54,7 @@ int	main(int argcount, char **args)
 	int		index;
 	char	curchr;
 
+	g_pause = 0;
 	signal(SIGUSR1, catchsignal);
 	serverpid = ft_atoi(args[1]);
 	if (!checkpid(argcount, serverpid))
