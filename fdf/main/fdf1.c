@@ -1,13 +1,13 @@
 #include "../minilibx/mlx.h"
 #include "../includes/all.h"
 
-static int getlines(t_map *map, int mapfd, unsigned int index);
-static int coloratoi(char *str);
-static void fillarray(t_map *map, char **splithold, unsigned int index);
+static int	getlines(t_map *map, int mapfd, unsigned int index);
+static int	coloratoi(char *str);
+static void	fillarray(t_map *map, char **splithold, unsigned int index);
 
-int loadmap(t_map *map, char *mapstr)
+int	loadmap(t_map *map, char *mapstr)
 {
-	int mapfd;
+	int	mapfd;
 
 	mapfd = open(mapstr, O_RDONLY);
 	if (mapfd == -1)
@@ -18,11 +18,23 @@ int loadmap(t_map *map, char *mapstr)
 	return (getlines(map, mapfd, 0));
 }
 
-static int getlines(t_map *map, int mapfd, unsigned int index)
+void	increment(char **splithold, unsigned int *linesize,
+	t_map *map, int index)
 {
-	char	*test;
-	char	**splithold;
-	unsigned int		linesize;
+	while (splithold[*linesize])
+		(*linesize)++;
+	if (splithold[(*linesize) - 1][0] == '\n')
+		(*linesize)--;
+	if (!map->maplength && *linesize)
+		map->maplength = *linesize;
+	map->map[index] = ft_calloc((*linesize) + 1, sizeof(int *));
+}
+
+static int	getlines(t_map *map, int mapfd, unsigned int index)
+{
+	char			*test;
+	char			**splithold;
+	unsigned int	linesize;
 
 	test = get_next_line(mapfd);
 	if (test)
@@ -40,26 +52,20 @@ static int getlines(t_map *map, int mapfd, unsigned int index)
 	}
 	splithold = ft_split(test, ' ');
 	linesize = 0;
-	while (splithold[linesize])
-		linesize++;
-	if (splithold[linesize - 1][0] == '\n')
-		linesize--;
-	if (!map->maplength && linesize)
-		map->maplength = linesize;
-	map->map[index] = ft_calloc(linesize + 1, sizeof(int *));
+	increment (splithold, &linesize, map, index);
 	fillarray(map, splithold, index);
 	free(test);
 	return (0);
 }
 
-static void fillarray(t_map *map, char **splithold
+static void	fillarray(t_map *map, char **splithold
 	, unsigned int index)
 {
 	unsigned int	linesize;
-	char	**innersplit;
+	char			**innersplit;
 
 	linesize = 0;
-	while(splithold[linesize])
+	while (splithold[linesize])
 	{
 		map->map[index][linesize] = ft_calloc(4, sizeof(int));
 		innersplit = ft_split(splithold[linesize], ',');
@@ -78,19 +84,19 @@ static void fillarray(t_map *map, char **splithold
 	free(splithold);
 }
 
-static int coloratoi(char *str)
+static int	coloratoi(char *str)
 {
-	int	startindex;
-	int	power;
-	int	total;
-	int	index;
+	int		startindex;
+	int		power;
+	int		total;
+	int		index;
 	char	*base;
 
 	base = "0123456789ABCDEF";
 	total = 0;
 	power = -1;
 	startindex = 8;
-	while(--startindex > 1)
+	while (--startindex > 1)
 	{
 		index = 0;
 		while (str[startindex] != base[index])

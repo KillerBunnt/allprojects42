@@ -12,6 +12,7 @@ FLAGSP = -L minilibx/ -lmlx -lX11 -lXext -lm
 
 all: 
 	make -C libftprintf
+	make -C minilibx
 	ln -f $(LIBFTPRINTFA) $(NAME)
 	make $(NAME)
 %.o: %.c
@@ -25,6 +26,7 @@ clean:
 fclean:
 	make clean
 	rm -f $(NAME)
+	make clean -C minilibx
 	make fclean -C libftprintf
 re:
 	make fclean
