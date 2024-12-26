@@ -12,4 +12,23 @@
 
 #include "../includes/manditory.h"
 
+int getsmallestsorted(t_stack *hold)
+{
+	int size;
+	int cursize;
 
+	cursize = 0;
+	size = 0;
+	while (hold->position != 1)
+	{
+		cursize++;
+		if (hold->value > hold->next->value)
+		{
+			if (size == 0 || cursize < size)
+				size = cursize;
+			cursize = 0;
+		}
+		hold = hold->next;
+	}
+	return (size);
+}

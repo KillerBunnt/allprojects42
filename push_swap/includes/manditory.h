@@ -49,8 +49,9 @@ int 	algo1(t_table *hold);
 t_stack *check(t_table *hold, int *counthold);
 void	presort(t_table *stacks);
 void	setupa(t_table *hold, int targetnum);
-void	setupb(t_table *hold, int targetnum, int end);
+void	setupb(t_table *hold, int targetnum, int start, int end);
 int		sortstart(t_table *hold, int startend, int endend);
 void	sortend(t_table *hold);
+int getsmallestsorted(t_stack *hold);
 
 #endif

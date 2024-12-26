@@ -24,34 +24,6 @@ int main(int argcount, char **args)
 	hold = inittable();
 	if (checkargs(hold, argcount, args) == 0)
 		return (0);
-	//algo start here
 	algo1(hold);
-	//bottom is testing
-	// int count = 0;
-	// while (++count < 4)
-	// 	pushrules(hold, 0);
-	// rotaterules(hold, -1);
-	//bottom is show
-	// t_stack *temp = hold->stacka;
-	// ft_printf("--------\nA\n--------\n");
-	// if (!temp)
-	// 	ft_printf("NULL  NULL\n");
-	// else
-	// 	do
-	// 	{
-	// 		ft_printf("%d  %d\n", temp->value, temp->position);
-	// 		temp = temp->next;
-	// 	}while (temp != hold->stacka);
-	
-	// ft_printf("--------\nB\n--------\n");
-	// temp = hold->stackb;
-	// if (!temp)
-	// 	ft_printf("NULL  NULL\n");
-	// else
-	// 	do
-	// 	{
-	// 		ft_printf("%d  %d\n", temp->value, temp->position);
-	// 		temp = temp->next;
-	// 	}while (temp != hold->stackb);
 	freetable(hold);
 }

@@ -97,6 +97,7 @@ int algo1(t_table *hold)
 	int		maxsortedcount;
 	t_stack *startmaxsorted;
 	t_stack *endmaxsorted;
+	unsigned int temp;
 
 	endmaxsorted = NULL;
 	startmaxsorted = NULL;
@@ -110,52 +111,76 @@ int algo1(t_table *hold)
 		return (1);
 	sortstart(hold, startmaxsorted->value, endmaxsorted->value);
 	sortend(hold);
+	startmaxsorted = hold->stacka;
+	temp = 0;
+	while (startmaxsorted->value > startmaxsorted->prev->value)
+	{
+		temp++;
+		startmaxsorted = startmaxsorted->prev;
+	}
+	if (hold->stackamax - temp < temp)
+	{
+		while (hold->stacka->value > hold->stacka->prev->value)
+			rotaterules(hold, 1);
+	}
+	else
+	{
+		while (hold->stacka->value > hold->stacka->prev->value)
+			rrotaterules(hold, 1);
+	}
 	return (0);
 }
 
 int sortstart(t_table *hold, int startend, int endend)
 {
 	int test;
-	int pushed;
+	t_stack *cuck;
+	int b_start;
+	int b_end;
 
-	startend++;
-	pushed = 0;
-	// endend = 21; for 100
-	endend = 100;
-	while (1)
+	test = hold->stackamax;
+	endend = 10;
+	b_start = 0;
+	b_end = 0;
+	while (endend <= test)
 	{
-		pushrules(hold, 2);
-		pushrules(hold, 2);
-		if (hold->stackb->value < hold->stackb->next->value)
-			swaprules(hold, 2);
-		test = hold->stackb->value;
-		while (pushed < endend && hold->stackamax)
+		if (hold->stackb)
 		{
-			while (hold->stacka->value < hold->stacka->next->value)
-			{
-				if (hold->stackbmax > 1)
-					setupb(hold, hold->stacka->value, test);
-				pushrules(hold, 2);
-				if (hold->stackb->value > test)
-					test = hold->stackb->value;
-				pushed++;
-			}
-			// ft_printf("last one");
-			if (hold->stackamax)
-			{
-				if (hold->stackbmax > 1)
-					setupb(hold, hold->stacka->value, test);
-				pushrules(hold, 2);
-				if (hold->stackb->value > test)
-					test = hold->stackb->value;
-				pushed++;
-			}
+			b_start = hold->stackb->value;
+			b_end = hold->stackb->prev->value;
 		}
-		pushed = 0;
-		while (hold->stackb->value < hold->stackb->prev->value)
-			rrotaterules(hold, 2);
-		if (!hold->stackamax)
-			break;
+		while (hold->stacka->value < hold->stacka->next->value)
+		{
+			if (hold->stackbmax > 1)
+				setupb(hold, hold->stacka->value, b_start, b_end);
+			pushrules(hold, 2);
+		}
+		if(hold->stacka->value != startend)
+		{
+			if (hold->stackbmax > 1)
+				setupb(hold, hold->stacka->value, b_start, b_end);
+			pushrules(hold, 2);
+		}
+		cuck = hold->stacka;
+		while (cuck->value < cuck->next->value)
+			cuck = cuck->next;
+		if (cuck == hold->stacka->prev)
+			return (0);
+		if (hold->stackbmax % (unsigned int)endend == 0)
+		{
+			while (hold->stackb->value < hold->stackb->prev->value)
+				rrotaterules(hold, 2);
+			// if (hold->stackbmax < hold->stackamax)
+			// {
+			// 	while (hold->stackbmax)
+			// 		pushrules(hold, 1);
+			// 	while(hold->stacka->value < hold->stacka->next->value)
+			// 		rotaterules(hold, 1);
+			// 	rotaterules(hold, 1);
+			// }
+		}
+		if (getsmallestsorted(hold->stacka) >= endend)
+			endend = hold->stackamax;
 	}
 	return (0);
 }
