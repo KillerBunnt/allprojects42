@@ -50,7 +50,7 @@ t_stack *check(t_table *hold, int *counthold);
 void	presort(t_table *stacks);
 void	setupa(t_table *hold, int targetnum);
 void	setupb(t_table *hold, int targetnum, int start, int end);
-int		sortstart(t_table *hold, int startend, int endend);
+int		sortstart(t_table *hold, int startend, int endend, unsigned int chunksize);
 void	sortend(t_table *hold);
 int getsmallestsorted(t_stack *hold);
 

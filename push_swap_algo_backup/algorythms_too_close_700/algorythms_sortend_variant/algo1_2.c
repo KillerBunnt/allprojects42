@@ -61,11 +61,56 @@ void setupa(t_table *hold, int targetnum)
 
 void sortend(t_table *hold)
 {
-	while (hold->stackbmax)
+	while (1)
 	{
 		if (hold->stackamax > 1)
 			setupa(hold, hold->stackb->value);
+		if (hold->stackb->value < hold->stackb->next->value)
+			break;
 		pushrules(hold, 1);
+	}
+	pushrules(hold, 1);
+	while (hold->stacka->value > hold->stacka->prev->value)
+		rrotaterules(hold, 1);
+	while (1)
+	{
+		if (hold->stacka->prev->value < hold->stackb->value)
+			pushrules(hold, 1);
+		else
+			rrotaterules(hold, 1);
+		if (hold->stackb->value < hold->stackb->next->value)
+			break;
+	}
+
+	while (hold->stacka->prev->value > hold->stackb->value)
+		rrotaterules(hold, 1);
+	pushrules(hold, 1);
+
+	while (hold->stacka->prev->value < hold->stacka->value)
+		rrotaterules(hold, 1);
+
+	while (hold->stacka->prev->value < hold->stackb->value)
+		pushrules(hold, 1);
+	while (hold->stackb->value > hold->stackb->next->value)
+		pushrules(hold, 1);
+	pushrules(hold, 1);
+
+	while (hold->stackb)
+	{
+		while (1)
+		{
+			while (hold->stacka->prev->value > hold->stackb->value)
+			{
+				rrotaterules(hold, 1);
+				if (hold->stacka->value < hold->stacka->prev->value)
+					break;
+			}
+			pushrules(hold, 1);
+			if (!hold->stackb || hold->stacka->value < hold->stackb->value)
+				break;
+		}
+		while (hold->stacka->prev->value < hold->stacka->value)
+			rrotaterules(hold, 1);
 	}
 }
 
