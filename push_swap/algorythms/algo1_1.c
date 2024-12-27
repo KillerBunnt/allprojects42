@@ -148,7 +148,7 @@ int sortstart(t_table *hold, int startend, int endend, unsigned int chunksize)
 		// ft_printf("step 1\n");
 		while (1)
 		{
-			if (hold->stacka->value > hold->stacka->next->value && hold->stacka->value < hold->stacka->next->next->value)
+			if (hold->stacka->value > hold->stacka->next->value && hold->stacka->value < hold->stacka->next->next->value && hold->stacka->next->next != hold->stacka)
 				swaprules(hold, 1);
 			if (hold->stackbmax - cursize > 1)
 				setupb(hold, hold->stacka->value, b_start, b_end);

@@ -61,10 +61,59 @@ void setupa(t_table *hold, int targetnum)
 
 void sortend(t_table *hold)
 {
-	while (hold->stackbmax)
+	int	bbig;
+	t_stack *temp;
+
+	while (hold->stackbmax >= hold->stackamax / 2)
 	{
+		while (hold->stackb->value > hold->stackb->next->value)
+		{
+			if (hold->stackamax > 1)
+				setupa(hold, hold->stackb->value);
+			pushrules(hold, 1);
+		}
 		if (hold->stackamax > 1)
 			setupa(hold, hold->stackb->value);
+		pushrules(hold, 1);
+	}
+	if (!hold->stackb)
+		return ;
+	bbig = hold->stackb->value;
+	temp = hold->stackb->next;
+	while (temp->value != bbig)
+	{
+		if (temp->value > bbig)
+			bbig = temp->value;
+		temp = temp->next;
+	}
+	while (1)
+	{
+		if (hold->stacka->value > hold->stacka->prev->value && hold->stackb->value != bbig)
+			rrotaterules(hold, 3);
+		else if (hold->stacka->value > hold->stacka->prev->value)
+			rrotaterules(hold, 1);
+		else if (hold->stackb->value != bbig)
+			rrotaterules(hold, 2);
+		else
+			break;
+	}
+	while (hold->stackb->value != bbig)
+		rrotaterules(hold, 2);
+	setupa(hold, hold->stackb->value);
+	pushrules(hold, 1);
+	while (hold->stackb)
+	{
+		bbig = hold->stackb->value;
+		temp = hold->stackb->next;
+		while (temp->value != bbig)
+		{
+			if (temp->value > bbig)
+				bbig = temp->value;
+			temp = temp->next;
+		}
+		while (hold->stackb->value != bbig)
+			rrotaterules(hold, 2);
+		setupa(hold, hold->stackb->value);
 		pushrules(hold, 1);
 	}
 }
