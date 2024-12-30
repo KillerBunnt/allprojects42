@@ -1,37 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   algo1_2.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdexmund <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/30 13:20:13 by tdexmund          #+#    #+#             */
+/*   Updated: 2024/12/30 13:20:14 by tdexmund         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/manditory.h"
 
-t_stack *rotatesetup(t_stack *temp, int targetnum, int start, int end);
-t_stack *rotatesetupa(t_stack *temp, int targetnum);
+t_stack	*rotatesetup(t_stack *temp, int targetnum, int start, int end);
+t_stack	*rotatesetupa(t_stack *temp, int targetnum);
 
-void setupb(t_table *hold, int targetnum, int start, int end)
+void	setupb(t_table *hold, int targetnum)
 {
-	t_stack				*temp;
 	unsigned int		pos;
+	t_stack				*temp;
+	int					num;
 
-	pos = 0;
 	temp = hold->stackb;
-	temp = rotatesetup(temp, targetnum, start, end);
-	// if (temp->prev->value > targetnum && temp->value < targetnum)
-	pos = temp->position;
-	// else
-	// {
-	// 	temp = temp->next;
-	// 	temp = rotatesetup(temp, targetnum, start, end);
-	// 	pos = temp->position;
-	// }
+	num = hold->stackb->value;
+	while (1)
+	{
+		if (num != targetnum)
+			temp = temp->next;
+		else
+		{
+			pos = temp->position;
+			break ;
+		}
+		num = temp->value;
+	}
 	if (hold->stackb->position - pos < pos)
 		while (++pos <= hold->stackbmax)
 			rotaterules(hold, 2);
 	else if (pos)
-		while(1)
-		{
-			rrotaterules(hold, 2);
-			if (!(--pos))
-				break;
-		}
+		reset(hold, pos, 2);
 }
 
-void setupa(t_table *hold, int targetnum)
+void	setupa(t_table *hold, int targetnum)
 {
 	t_stack				*temp;
 	unsigned int		pos;
@@ -51,76 +61,24 @@ void setupa(t_table *hold, int targetnum)
 		while (++pos <= hold->stackamax)
 			rotaterules(hold, 1);
 	else if (pos)
-		while(1)
-		{
-			rrotaterules(hold, 1);
-			if (!(--pos))
-				break;
-		}
+		reset(hold, pos, 1);
 }
 
-void sortend(t_table *hold)
+void	sortend(t_table *hold)
 {
-	int	bbig;
-	t_stack *temp;
+	int		biggest;
 
-	while (hold->stackbmax >= hold->stackamax / 2)
+	while (hold->stackbmax)
 	{
-		while (hold->stackb->value > hold->stackb->next->value)
-		{
-			if (hold->stackamax > 1)
-				setupa(hold, hold->stackb->value);
-			pushrules(hold, 1);
-		}
-		if (hold->stackamax > 1)
-			setupa(hold, hold->stackb->value);
-		pushrules(hold, 1);
-	}
-	if (!hold->stackb)
-		return ;
-	bbig = hold->stackb->value;
-	temp = hold->stackb->next;
-	while (temp->value != bbig)
-	{
-		if (temp->value > bbig)
-			bbig = temp->value;
-		temp = temp->next;
-	}
-	while (1)
-	{
-		if (hold->stacka->value > hold->stacka->prev->value && hold->stackb->value != bbig)
-			rrotaterules(hold, 3);
-		else if (hold->stacka->value > hold->stacka->prev->value)
-			rrotaterules(hold, 1);
-		else if (hold->stackb->value != bbig)
-			rrotaterules(hold, 2);
-		else
-			break;
-	}
-	while (hold->stackb->value != bbig)
-		rrotaterules(hold, 2);
-	setupa(hold, hold->stackb->value);
-	pushrules(hold, 1);
-	while (hold->stackb)
-	{
-		bbig = hold->stackb->value;
-		temp = hold->stackb->next;
-		while (temp->value != bbig)
-		{
-			if (temp->value > bbig)
-				bbig = temp->value;
-			temp = temp->next;
-		}
-		while (hold->stackb->value != bbig)
-			rrotaterules(hold, 2);
-		setupa(hold, hold->stackb->value);
+		biggest = getbiggest(hold->stackb);
+		setupb(hold, biggest);
 		pushrules(hold, 1);
 	}
 }
 
-t_stack *rotatesetup(t_stack *temp, int targetnum, int start, int end)
+t_stack	*rotatesetup(t_stack *temp, int targetnum, int start, int end)
 {
-	t_stack *temp2;
+	t_stack	*temp2;
 
 	temp2 = temp;
 	while (1)
@@ -132,36 +90,18 @@ t_stack *rotatesetup(t_stack *temp, int targetnum, int start, int end)
 			while (temp->prev->value != end)
 				temp = temp->next;
 			if (temp == temp2)
-			{
-				while (temp->value != start)
-					temp = temp->next;
-				if (temp->prev->value < targetnum)
-				{
-					while (temp->prev->value != end)
-						temp = temp->next;
-				}
-				return (temp);
-			}
+				return (skippart(start, end, temp, targetnum));
 			else
 				temp = temp->prev;
 		}
 		temp = temp->next;
 		if (temp == temp2)
-		{
-			while (temp->value < temp->prev->value && temp->value != start)
-				temp = temp->next;
-			if (temp->prev->value < targetnum)
-			{
-				while (end && temp->prev->value != end)
-					temp = temp->next;
-			}
-			return (temp);
-		}
+			return (getcorrectpos(temp, end, start, targetnum));
 	}
 	return (temp);
 }
 
-t_stack *rotatesetupa(t_stack *temp, int targetnum)
+t_stack	*rotatesetupa(t_stack *temp, int targetnum)
 {
 	while (temp->value > temp->prev->value)
 	{

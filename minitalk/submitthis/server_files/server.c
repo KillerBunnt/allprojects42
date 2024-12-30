@@ -1,0 +1,73 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   testserver.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdexmund <tdexmund@student.42kl.edu.my>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/19 16:29:42 by tdexmund          #+#    #+#             */
+/*   Updated: 2024/12/22 19:01:25 by tdexmund         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/all.h"
+
+void	fillbuffer(unsigned char *buffer, int sigcode)
+{
+	if (sigcode == SIGUSR1)
+		*buffer = (*buffer >> 1) | 128;
+	else
+		*buffer = (*buffer >> 1);
+}
+
+void	process_word(int *signalsrecieved, unsigned char *buffer
+	, unsigned char *unicode, int *index)
+{
+	if (*signalsrecieved == 8)
+	{
+		if (*buffer == 255)
+			ft_putstr_fd("\nEND OF MESSAGE\n\n", 1);
+		else if (*index < 4)
+		{
+			unicode[*index] = *buffer;
+			(*index)++;
+		}
+		if (*buffer == 0)
+		{
+			ft_putstr_fd((char *)unicode, 1);
+			while (*index >= 0)
+				unicode[(*index)--] = 0;
+			*index = 0;
+		}
+		*buffer = 0;
+		*signalsrecieved = 0;
+	}
+}
+
+void	signalhandlers(int sigcode, siginfo_t *client, void *others)
+{
+	static int				signalsrecieved = 0;
+	static int				index = 0;
+	static unsigned char	unicode[4] = {0, 0, 0, 0};
+	static unsigned char	buffer;
+
+	others = (void *)others;
+	signalsrecieved++;
+	fillbuffer(&buffer, sigcode);
+	process_word(&signalsrecieved, &buffer, ((unsigned char *)unicode), &index);
+	kill(client->si_pid, SIGUSR1);
+}
+
+int	main(void)
+{
+	unsigned int		serverpid;
+	struct sigaction	handle;
+
+	serverpid = getpid();
+	ft_printf("Server's process ID: %u\n", serverpid);
+	handle.sa_sigaction = signalhandlers;
+	sigaction(SIGUSR1, &handle, NULL);
+	sigaction(SIGUSR2, &handle, NULL);
+	while (1)
+		pause();
+}

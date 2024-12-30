@@ -1,7 +1,8 @@
 COMPILE =cc
-FILESM = ./main/fdf.c ./main/fdf1.c\
+FILESM = ./main/fdf.c\
 		./get_next_line/get_next_line.c ./get_next_line/get_next_line_utils.c \
-		./utils/utils2.c ./utils/readmap.c ./utils/drawmap.c ./utils/colorcode.c
+		./utils/utils2.c ./utils/readmap.c ./utils/drawmap.c ./utils/colorcode.c ./utils/createmap.c \
+		./utils/drawmap_vertical.c ./utils/drawmap_horizontal.c ./utils/putbase.c ./utils/frees.c
 MAN = $(FILESM:.c=.o)
 LIBFTPRINTFA = libftprintf/libftprintf.a
 NAME = fdf.a
@@ -26,6 +27,7 @@ clean:
 fclean:
 	make clean
 	rm -f $(NAME)
+	rm fdf
 	make clean -C minilibx
 	make fclean -C libftprintf
 re:

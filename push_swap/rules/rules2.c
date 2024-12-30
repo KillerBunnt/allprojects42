@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rules2.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdexmund <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/30 13:32:33 by tdexmund          #+#    #+#             */
+/*   Updated: 2024/12/30 13:32:34 by tdexmund         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/manditory.h"
 
-void rotateab(t_stack *curstack);
-void rrotateab(t_stack *curstack);
+void	rotateab(t_stack *curstack);
+void	rrotateab(t_stack *curstack);
 
-void rrotaterules(t_table *stacks, int options)
+void	rrotaterules(t_table *stacks, int options)
 {
 	if (options == 1)
 	{
@@ -27,7 +39,7 @@ void rrotaterules(t_table *stacks, int options)
 	}
 }
 
-void rotaterules(t_table *stacks, int options)
+void	rotaterules(t_table *stacks, int options)
 {
 	if (options == 1)
 	{
@@ -51,9 +63,9 @@ void rotaterules(t_table *stacks, int options)
 	}
 }
 
-void rotateab(t_stack *curstack)
+void	rotateab(t_stack *curstack)
 {
-	int temp;
+	int	temp;
 
 	temp = curstack->position;
 	while (curstack->position != temp + 1)
@@ -64,9 +76,9 @@ void rotateab(t_stack *curstack)
 	curstack->position = 1;
 }
 
-void rrotateab(t_stack *curstack)
+void	rrotateab(t_stack *curstack)
 {
-	int temp;
+	int	temp;
 
 	temp = curstack->position;
 	curstack = curstack->prev;

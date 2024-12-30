@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rules1.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdexmund <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/30 13:32:29 by tdexmund          #+#    #+#             */
+/*   Updated: 2024/12/30 13:32:30 by tdexmund         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/manditory.h"
 
-void swapab(t_stack *curstack);
-void pusha(t_table *stacks);
-void pushb(t_table *stacks);
+void	swapab(t_stack *curstack);
+void	pusha(t_table *stacks);
+void	pushb(t_table *stacks);
 
-void swaprules(t_table *stacks, int options)
+void	swaprules(t_table *stacks, int options)
 {
 	if (options == 1)
 	{
@@ -24,18 +36,19 @@ void swaprules(t_table *stacks, int options)
 	}
 }
 
-void swapab(t_stack *curstack)
+void	swapab(t_stack *curstack)
 {
-	int temp;
+	int	temp;
 
 	temp = curstack->value;
 	curstack->value = curstack->next->value;
 	curstack->next->value = temp;
 }
 
-void pushrules(t_table *stacks, int options)
+void	pushrules(t_table *stacks, int options)
 {
 	if (options == 1)
+	{
 		if (stacks->stackbmax)
 		{
 			pusha(stacks);
@@ -43,7 +56,9 @@ void pushrules(t_table *stacks, int options)
 		}
 		else
 			return ;
+	}
 	else
+	{
 		if (stacks->stackamax)
 		{
 			pushb(stacks);
@@ -51,11 +66,12 @@ void pushrules(t_table *stacks, int options)
 		}
 		else
 			return ;
+	}
 }
 
-void pusha(t_table *stacks)
+void	pusha(t_table *stacks)
 {
-	t_stack *temp;
+	t_stack	*temp;
 
 	temp = stacks->stackb;
 	if (stacks->stackbmax == 1)
@@ -81,9 +97,9 @@ void pusha(t_table *stacks)
 	temp->position = stacks->stackamax;
 }
 
-void pushb(t_table *stacks)
+void	pushb(t_table *stacks)
 {
-	t_stack *temp;
+	t_stack	*temp;
 
 	temp = stacks->stacka;
 	if (stacks->stackamax == 1)
@@ -108,4 +124,3 @@ void pushb(t_table *stacks)
 	(stacks->stackbmax)++;
 	temp->position = stacks->stackbmax;
 }
-
